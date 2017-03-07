@@ -33,23 +33,19 @@ class RestServiceTest extends Specification {
     }
 
     def "it should mock and verify get"() {
-        given:
-        def httpClient = Mock(HttpClient)
-
-        and:
-        httpClient.get({ it.contains("/book") }) >> null
-        httpClient.get({ it.contains("/text-book") }) >> "text-book"
+        setup:
+        def httpClient = Mock(HttpClient) {
+            1 * get({ it.contains("/book") }) >> "book"
+            1 * get({ it.contains("/text-book") }) >> "text-book"
+        }
 
         when:
         def result1 = httpClient.get("/book")
         def result2 = httpClient.get("/text-book")
 
         then:
-        result1 == null
+        result1 == "book"
         result2 == "text-book"
-
-        and:
-        2 * httpClient.get(_)
     }
 
     def "out of line mocking should work, 1"() {
